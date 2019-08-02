@@ -58,12 +58,13 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
 
     case ALU_CMP:
       //Compare the values in two registers.
+      //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
       if (cpu->registers[regA] == regB) {
-        //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
         cpu->flag = CMP_E;
-      } else if (cpu->registers[regA] > regB) {
-        //If registerA is less than registerB, set the Less-than L flag to 1, 
-        //otherwise set it to 0.
+
+      //If registerA is less than registerB, set the Less-than L flag to 1, 
+      //otherwise set it to 0.
+      } else if (cpu->registers[regA] < regB) {
         cpu->flag = CMP_L;
       //If registerA is greater than registerB, set the Greater-than G flag to 1, 
       //otherwise set it to 0.
