@@ -55,6 +55,23 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
     case ALU_ADD:
       cpu->registers[regA] += cpu->registers[regB];
       break;
+
+    case ALU_CMP:
+    //NEED to set the flag value!!!!
+    
+    
+    //Compare the values in two registers.
+    if (cpu->registers[regA] == regB) {
+    //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
+      cpu->flag = cpu->flag | (1 << 0);
+    } else if (cpu->registers[regA] > regB) {
+    //If registerA is less than registerB, set the Less-than L flag to 1, otherwise set it to 0.
+      cpu->flag = cpu->flag | (1 << 1);
+    //If registerA is greater than registerB, set the Greater-than G flag to 1, otherwise set it to 0.
+    } else {
+      cpu->flag = cpu->flag | (1 << 2);
+    }
+    break;
   }
 }
 
@@ -97,6 +114,10 @@ void cpu_run(struct cpu *cpu)
         alu(cpu, ALU_ADD, opA, opB);
         break;
 
+      case CMP:
+        alu(cpu, ALU_CMP, opA, opB);
+        break;
+
       case HLT:
         running = 0;
         break;
@@ -116,6 +137,7 @@ void cpu_run(struct cpu *cpu)
 void cpu_init(struct cpu *cpu)
 {
   cpu->PC = 0;
+  cpu->flag = 0;
 
   //zero registers and RAM
   memset(cpu->registers, 0, sizeof cpu->registers);
