@@ -29,6 +29,10 @@ enum alu_op {
 #define JMP  0b01010100
 #define JEQ  0b01010101
 #define JNE  0b01010110
+#define CMP  0b10100111
+#define CMP_L 0b00000100 
+#define CMP_G 0b00000010 //>
+#define CMP_E 0b00000001 //==1
 
 
 // Function declarations

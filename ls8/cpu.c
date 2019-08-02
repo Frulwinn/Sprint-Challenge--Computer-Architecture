@@ -164,6 +164,10 @@ void cpu_init(struct cpu *cpu)
   cpu->PC = 0;
   cpu->flag = 0;
 
+  //0: Timer interrupt. This interrupt triggers once per second.
+  //1: Keyboard interrupt. This interrupt triggers when a key is pressed. 
+  //The value of the key pressed is stored in address 0xF4.
+
   //zero registers and RAM
   memset(cpu->registers, 0, sizeof cpu->registers);
   memset(cpu->ram, 0, sizeof cpu->ram);
