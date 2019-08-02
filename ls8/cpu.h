@@ -21,17 +21,17 @@ enum alu_op {
 // Instructions
 // These use binary literals. If these aren't available with your compiler, hex
 // literals should be used.
-#define LDI  0b10000010
-#define PRN  0b01000111
-#define HLT  0b00000001
-#define MUL  0b10100010
-#define ADD  0b10100000
-#define JMP  0b01010100
-#define JEQ  0b01010101
-#define JNE  0b01010110
-#define CMP  0b10100111
-#define CMP_L 0b00000100 
-#define CMP_G 0b00000010 //>
+#define LDI   0b10000010
+#define PRN   0b01000111
+#define HLT   0b00000001
+#define MUL   0b10100010
+#define ADD   0b10100000
+#define JMP   0b01010100
+#define JEQ   0b01010101
+#define JNE   0b01010110
+#define CMP   0b10100111
+#define CMP_L 0b00000100 //< 4
+#define CMP_G 0b00000010 //> 2
 #define CMP_E 0b00000001 //==1
 
 

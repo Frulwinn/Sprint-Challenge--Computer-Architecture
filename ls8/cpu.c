@@ -32,7 +32,7 @@ void cpu_load(char *filename, struct cpu *cpu)
 
     //convert string to a number
     char *endptr;
-    unsigned char value = strtol(line, &endptr, 2);;
+    unsigned char value = strtol(line, &endptr, 2);
 
     //ignore lines from which no numbers were read
     if (endptr == line) {
@@ -42,6 +42,7 @@ void cpu_load(char *filename, struct cpu *cpu)
     //store in ram
     cpu_ram_write(cpu, value, address++);
   }
+  fclose(fp);
 }
 
 void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB)
@@ -59,12 +60,12 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
     case ALU_CMP:
       //Compare the values in two registers.
       //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
-      if (cpu->registers[regA] == regB) {
+      if (cpu->registers[regA] == cpu->registers[regB]) {
         cpu->flag = CMP_E;
 
       //If registerA is less than registerB, set the Less-than L flag to 1, 
       //otherwise set it to 0.
-      } else if (cpu->registers[regA] < regB) {
+      } else if (cpu->registers[regA] < cpu->registers[regB]) {
         cpu->flag = CMP_L;
       //If registerA is greater than registerB, set the Greater-than G flag to 1, 
       //otherwise set it to 0.
@@ -84,14 +85,17 @@ void cpu_run(struct cpu *cpu)
     unsigned char opA = 0;
     unsigned char opB = 0;
     unsigned char IR = cpu_ram_read(cpu, cpu->PC);
-    unsigned int num_op = IR >> 6;
+    unsigned int num_op = (IR >> 6);
 
+    //bitwise-AND the result with 0xFF (255) to keep the register values in that range
     if (num_op == 2) {
       opA = cpu_ram_read(cpu, (cpu->PC + 1));
       opB = cpu_ram_read(cpu, (cpu->PC + 2));
     } else if (num_op == 1) {
       opA = cpu_ram_read(cpu, (cpu->PC + 1));
-    } 
+    } else {
+      return;
+    }
 
     //this line is shifting the instruction by 4 bits to access
     //then seeing if the bit is set to 0 or 1
@@ -128,9 +132,9 @@ void cpu_run(struct cpu *cpu)
         //If equal flag is set (true), jump to the address stored in the given register.
         if ((cpu->flag & CMP_E) == CMP_E) {
           cpu->PC = cpu->registers[opA];
-        } else {
-          //or just go to the next step
-          cpu->PC += 2;
+         } else {
+        // or just go to the next step
+           cpu->PC += 2;
         }
         break;
 
@@ -156,14 +160,18 @@ void cpu_run(struct cpu *cpu)
     if (!instruction_set_pc) {
       //increment PC by the number of arguments that were passed to the instruction we just executed
       cpu->PC += num_op + 1;
+      
     }
   }
 }
 
 void cpu_init(struct cpu *cpu)
 {
+  //PC and FL registers are cleared to 0
   cpu->PC = 0;
-  cpu->flag = 0;
+  //cpu->flag = 0;
+  //R7 is set to 0xF4
+  cpu->registers[7] = 0xF4;
 
   //0: Timer interrupt. This interrupt triggers once per second.
   //1: Keyboard interrupt. This interrupt triggers when a key is pressed. 
