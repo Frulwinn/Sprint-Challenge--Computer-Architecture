@@ -57,20 +57,19 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
       break;
 
     case ALU_CMP:
-    
-    //Compare the values in two registers.
-    if (cpu->registers[regA] == regB) {
-    //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
-      cpu->flag = CMP_E;
-    } else if (cpu->registers[regA] > regB) {
-    //If registerA is less than registerB, set the Less-than L flag to 1, 
-    //otherwise set it to 0.
-      cpu->flag = CMP_L;
-    //If registerA is greater than registerB, set the Greater-than G flag to 1, 
-    //otherwise set it to 0.
-    } else {
-      cpu->flag = CMP_G;
-    }
+      //Compare the values in two registers.
+      if (cpu->registers[regA] == regB) {
+        //If they are equal, set the Equal E flag to 1, otherwise set it to 0.
+        cpu->flag = CMP_E;
+      } else if (cpu->registers[regA] > regB) {
+        //If registerA is less than registerB, set the Less-than L flag to 1, 
+        //otherwise set it to 0.
+        cpu->flag = CMP_L;
+      //If registerA is greater than registerB, set the Greater-than G flag to 1, 
+      //otherwise set it to 0.
+      } else {
+        cpu->flag = CMP_G;
+      }
     break;
   }
 }
@@ -116,6 +115,32 @@ void cpu_run(struct cpu *cpu)
 
       case CMP:
         alu(cpu, ALU_CMP, opA, opB);
+        break;
+
+      case JMP:
+        //Jump to the address stored in the given register.
+        //Set the PC to the address stored in the given register.
+        cpu->PC = cpu->registers[opA];
+        break;
+
+      case JEQ:
+        //If equal flag is set (true), jump to the address stored in the given register.
+        if ((cpu->flag & CMP_E) == CMP_E) {
+          cpu->PC = cpu->registers[opA];
+        } else {
+          //or just go to the next step
+          cpu->PC += 2;
+        }
+        break;
+
+      case JNE:
+        //If E flag is clear (false, 0), jump to the address stored in the given register.
+        if ((cpu->flag & CMP_E) != CMP_E) {
+          cpu->PC = cpu->registers[opA];
+        } else {
+          //or just go to next step
+          cpu->PC += 2;
+        }
         break;
 
       case HLT:
